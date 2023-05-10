@@ -6,16 +6,44 @@ class Blockchain {
       - 创世区块
       - 存储区块的映射
   */
-  constructor() {}
+  constructor(name) {
+    this.name=name
+  }
+  genesis=null
+  blocks={}
 
   // 2. 定义 longestChain 函数
   /* 
     返回当前链中最长的区块信息列表
   */
   longestChain() {
-
-
-    return []
+    let high=null
+    // 找出高度最高的区块
+    for (let hash in this.blocks) {
+      if(!high){
+        high=this.blocks[hash]
+      }
+      if(high.height<this.blocks[hash].height){
+        high=this.blocks[hash]
+      }
+    }
+    let longest=[]
+    //由最高的区块反推到创世区块
+    longest.push(high)
+    //找到创世区块就停止循环
+    while (high.prevHash!==this.genesis.hash) {
+      //循环blocks找到前一个区块
+      for (let hash in this.blocks) {
+        let block = this.blocks[hash]
+        if (high.prevHash === block.hash) {
+          //找到的区块放入最长链表中
+          longest.push(block)
+          high = block
+        }
+      }
+    }
+    //逆转数组元素
+    return longest.reverse()
   }
 }
 

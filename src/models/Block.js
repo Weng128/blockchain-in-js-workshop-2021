@@ -1,3 +1,4 @@
+
 import blockchain from "./Blockchain.js";
 import sha256 from "crypto-js/sha256.js";
 //import {parseBytes} from "elliptic/lib/elliptic/utils.js";
@@ -54,6 +55,8 @@ class Block {
         JSON.stringify(this.data)
     ).toString();
   }
+
+
 
 }
 

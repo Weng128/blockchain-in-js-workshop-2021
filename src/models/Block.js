@@ -1,5 +1,9 @@
 import blockchain from "./Blockchain.js";
 import sha256 from "crypto-js/sha256.js";
+//import {parseBytes} from "elliptic/lib/elliptic/utils.js";
+import pkg from 'elliptic/lib/elliptic/utils.js';
+const {parseBytes} = pkg;
+export const DIFFICULTY = 10
 
 class Block {
   // 1. 完成构造函数及其参数
@@ -26,6 +30,32 @@ class Block {
         this.height + JSON.stringify(this.data)
     ).toString();
   }
+
+  isValid() {
+    let num=0
+    for (let i=0;i<this.hash.length;i++) {
+      if (this.hash[i]==='0'){
+        num++
+      }else {
+        break
+      }
+    }
+    if (num<DIFFICULTY){
+      return false
+    }else {
+      return true
+    }
+  }
+
+  setNonce(nonce) {
+    this.hash=sha256(nonce+this.blockchain.name +
+        this.prevHash +
+        this.height +
+        JSON.stringify(this.data)
+    ).toString();
+  }
+
 }
 
 export default Block
+

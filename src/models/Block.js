@@ -3,8 +3,9 @@ import blockchain from "./Blockchain.js";
 import sha256 from "crypto-js/sha256.js";
 //import {parseBytes} from "elliptic/lib/elliptic/utils.js";
 import pkg from 'elliptic/lib/elliptic/utils.js';
+import UTXOPool from "./UTXOPool.js";
 const {parseBytes} = pkg;
-export const DIFFICULTY = 10
+export const DIFFICULTY = 1
 
 class Block {
   // 1. 完成构造函数及其参数
@@ -15,7 +16,8 @@ class Block {
   自身的哈希值
 
   */
-  constructor(blockchain, prevHash, height, data) {
+
+  constructor(blockchain, prevHash, height, data,miner) {
     // 设置所属的区块链
     this.blockchain = blockchain;
     // 设置前一个区块的哈希值
@@ -30,6 +32,9 @@ class Block {
         this.prevHash +
         this.height + JSON.stringify(this.data)
     ).toString();
+    this.coinbaseBeneficiary=miner
+    this.utxoPool = new UTXOPool()
+
   }
 
   isValid() {

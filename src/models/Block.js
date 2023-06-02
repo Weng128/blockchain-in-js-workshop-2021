@@ -4,6 +4,9 @@ import sha256 from "crypto-js/sha256.js";
 //import {parseBytes} from "elliptic/lib/elliptic/utils.js";
 import pkg from 'elliptic/lib/elliptic/utils.js';
 import UTXOPool from "./UTXOPool.js";
+import MerkleTree from "./MerkleTree.js";
+import UTXO from "./UTXO.js";
+import merkleTree from "./MerkleTree.js";
 const {parseBytes} = pkg;
 export const DIFFICULTY = 1
 
@@ -24,13 +27,15 @@ class Block {
     this.prevHash = prevHash;
     // 设置区块高度，即在区块链中的位置
     this.height = height;
-    // 设置区块数据，可以是任意类型的值
-    this.data = data;
+    // 设置区块存储交易的属性
+    this.data=[data]
+    this.merkleTree = new MerkleTree(this.data);
     // 根据区块内容计算哈希值，使用区块链名称、前一个区块的哈希值、区块高度和数据字符串作为输入
     this.hash = sha256(
         this.blockchain.name +
         this.prevHash +
-        this.height + JSON.stringify(this.data)
+        this.height +
+        this.merkleTree.getRoot()
     ).toString();
     this.coinbaseBeneficiary=miner
     this.utxoPool = new UTXOPool()
@@ -57,23 +62,28 @@ class Block {
     this.hash=sha256(nonce+this.blockchain.name +
         this.prevHash +
         this.height +
-        JSON.stringify(this.data)
+        this.merkleTree.getRoot()
     ).toString();
   }
 
 
 
-  setNonce(nonce) {}
-
   // 根据交易变化更新区块 hash
-  _setHash() {}
-
+  _setHash() {
+    this.hash=sha256(
+        this.blockchain.name +
+        this.prevHash +
+        this.height +
+        this.merkleTree.getRoot()
+    ).toString()
+  }
   // 汇总计算交易的 Hash 值
   /**
    * 默克尔树实现
    */
   combinedTransactionsHash() {
-
+    this.merkleTree.buildTree(this.data)
+    return this.merkleTree.getRoot()
   }
 
   // 添加交易到区块
@@ -81,7 +91,15 @@ class Block {
    *
    * 需包含 UTXOPool 的更新与 hash 的更新
    */
-  addTransaction() {}
+  addTransaction(trx) {
+    //更新UTXOPool
+    this.utxoPool.handleTransaction(trx)
+    //将交易打包到区块中
+    this.data.push(trx.hash)
+    this.combinedTransactionsHash()
+    //更新区块hash
+    this._setHash()
+  }
 
 }
 

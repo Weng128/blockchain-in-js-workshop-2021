@@ -66,6 +66,7 @@ const main = () => {
     nextBlock.hash,
     3,
     sha256(new Date().getTime().toString()).toString(),
+    miner
   )
 
   thirdBlock = calcNonce(thirdBlock)
@@ -135,7 +136,7 @@ const main = () => {
   log(latestUTXOPool)
 
   let badTrx = new Transaction(miner, receiverPubKey, 100)
-  
+
   // 对比更新交易之后的 hash 数据
   let trxHash = thirdBlock.combinedTransactionsHash().toString()
   thirdBlock.addTransaction(badTrx)

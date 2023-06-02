@@ -66,6 +66,7 @@ const main = () => {
     nextBlock.hash,
     3,
     sha256(new Date().getTime().toString()).toString(),
+      miner
   )
 
   thirdBlock = calcNonce(thirdBlock)
@@ -117,11 +118,11 @@ const main = () => {
   )
 
   latestUTXOPool.handleTransaction(trx)
-
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
     'Error: miner should got right balance',
   )
+
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&

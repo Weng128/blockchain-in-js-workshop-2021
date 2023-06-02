@@ -29,11 +29,14 @@ class UTXOPool {
 
   // 处理交易函数
   handleTransaction(trx) {
-    if(this.isValidTransaction(trx.from,trx.amount)) {
+    if(this.isValidTransaction(trx.from,trx.amount)) {//验证交易是否有效
+      //查看交易池中是否存在收款人哈希，不存在则创建
       if (!this.utxos.hasOwnProperty(trx.to)) {
         this.utxos[trx.to] = new UTXO(trx.to, 0)
       }
+      //对utxos进行更新
       this.utxos[trx.from].amount -= trx.amount
+      //汇总有相同收款人哈希的utxo
       for (let utxosKey in this.utxos) {
         if (trx.to === utxosKey) {
           this.utxos[trx.to].amount += trx.amount

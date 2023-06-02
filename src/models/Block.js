@@ -92,11 +92,13 @@ class Block {
    * 需包含 UTXOPool 的更新与 hash 的更新
    */
   addTransaction(trx) {
-    //更新UTXOPool
-    this.utxoPool.handleTransaction(trx)
-    //将交易打包到区块中
-    this.data.push(trx.hash)
-    this.combinedTransactionsHash()
+    //将交易添加到区块中,无效的交易不添加
+    if (this.utxoPool.isValidTransaction(trx.from,trx.amount)) {
+      //更新UTXOPool
+      this.utxoPool.handleTransaction(trx)
+      this.data.push(trx.hash)
+      this.combinedTransactionsHash()
+    }
     //更新区块hash
     this._setHash()
   }

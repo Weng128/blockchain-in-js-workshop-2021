@@ -141,7 +141,7 @@ const main = () => {
   let trxHash = thirdBlock.combinedTransactionsHash().toString()
   thirdBlock.addTransaction(badTrx)
 
-  assert(trxHash != thirdBlock.combinedTransactionsHash().toString(), 'Error: new trx cannot have same hash')
+  assert(trxHash == thirdBlock.combinedTransactionsHash().toString(), 'Error: new trx cannot have same hash')
 
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,

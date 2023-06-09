@@ -39,7 +39,6 @@ class Block {
     ).toString();
     this.coinbaseBeneficiary=miner
     this.utxoPool = new UTXOPool()
-
   }
 
   isValid() {
@@ -93,7 +92,7 @@ class Block {
    */
   addTransaction(trx) {
     //将交易添加到区块中,无效的交易不添加
-    if (this.utxoPool.isValidTransaction(trx.from,trx.amount)) {
+    if (this.utxoPool.isValidTransaction(trx)) {
       //更新UTXOPool
       this.utxoPool.handleTransaction(trx)
       this.data.push(trx.hash)

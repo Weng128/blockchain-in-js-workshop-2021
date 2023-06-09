@@ -66,6 +66,7 @@ const main = () => {
     nextBlock.hash,
     3,
     sha256(new Date().getTime().toString()).toString(),
+      miner
   )
 
   thirdBlock = calcNonce(thirdBlock)
@@ -117,7 +118,6 @@ const main = () => {
     trx._calculateHash() != compareTrx._calculateHash(),
     'Error: Trx hash need calc with Fee',
   )
-
   assert(
     latestUTXOPool.isValidTransaction(trx) == true,
     'Error: trx need to be validate',
@@ -148,7 +148,7 @@ const main = () => {
   thirdBlock.addTransaction(badTrx)
 
   assert(
-    trxHash != thirdBlock.combinedTransactionsHash().toString(),
+    trxHash == thirdBlock.combinedTransactionsHash().toString(),
     'Error: new trx cannot have same hash',
   )
 

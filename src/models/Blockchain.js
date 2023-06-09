@@ -89,10 +89,9 @@ class Blockchain {
     if (block.prevHash!==this.genesis.hash) {
       block.utxoPool.utxos[block.coinbaseBeneficiary] = this.blocks[block.prevHash].utxoPool.clone()
     }
+    block.utxoPool.miner=block.coinbaseBeneficiary
     let utxo = new UTXO(block.coinbaseBeneficiary, 12.5)
     block.utxoPool.addUTXO(utxo)
-
-
   }
 }
 

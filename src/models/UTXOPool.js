@@ -2,8 +2,9 @@ import UTXO from './UTXO.js'
 import block from "./Block.js";
 
 class UTXOPool {
-  constructor(utxos = {}) {
-    this.utxos=utxos
+  constructor() {
+    this.miner=''
+    this.utxos={}
   }
 
   // 添加交易函数
@@ -24,24 +25,25 @@ class UTXOPool {
 
   // 将当前 UXTO 的副本克隆
   clone() {
-    return this.utxos['04fc5783257a53bcfcc6e1ea3c5059393df15ef4a286f7ac4c771ab8caa67dd1391822f9f8c3ce74d7f7d2cb2055232c6382ccef5c324c957ef5c052fd57679e86']
+    return this.utxos[this.miner]
   }
 
   // 处理交易函数
   handleTransaction(trx) {
-    if(this.isValidTransaction(trx.from,trx.amount)) {//验证交易是否有效
+    if(this.isValidTransaction(trx)) {//验证交易是否有效
       //查看交易池中是否存在收款人哈希，不存在则创建
       if (!this.utxos.hasOwnProperty(trx.to)) {
         this.utxos[trx.to] = new UTXO(trx.to, 0)
       }
       //对utxos进行更新
-      this.utxos[trx.from].amount -= trx.amount
+      this.utxos[trx.from].amount -= (trx.amount+trx.fee)
       //汇总有相同收款人哈希的utxo
       for (let utxosKey in this.utxos) {
         if (trx.to === utxosKey) {
           this.utxos[trx.to].amount += trx.amount
         }
       }
+      this.utxos[this.miner].amount+=trx.fee
     }
   }
 
@@ -50,8 +52,8 @@ class UTXOPool {
    * 验证余额
    * 返回 bool
    */
-  isValidTransaction(from,amount) {
-    if(this.utxos[from].amount-amount>0)
+  isValidTransaction(trx) {
+    if(this.utxos[trx.from].amount-trx.amount-trx.fee>0)
       return true
     return false
   }
